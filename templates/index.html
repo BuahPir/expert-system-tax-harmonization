@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Beranda — Sistem Pakar PPh Orang Pribadi{% endblock %}
+
+{% block content %}
+<div class="hero">
+  <div class="hero-badge">Berbasis UU HPP No. 7 / 2021</div>
+  <h1 class="hero-title">Sistem Pakar Penentuan<br>Subjek &amp; Objek PPh</h1>
+  <p class="hero-desc">
+    Bantu Anda menentukan status kewajiban Pajak Penghasilan (PPh) orang pribadi secara
+    mandiri menggunakan metode <strong>Forward Chaining</strong> berdasarkan
+    Undang-Undang Harmonisasi Peraturan Perpajakan.
+  </p>
+  <a href="{{ url_for('konsultasi') }}" class="btn-primary btn-lg">
+    Mulai Konsultasi &rarr;
+  </a>
+</div>
+
+<div class="feature-grid">
+  <div class="feature-card">
+    <div class="feature-icon">🔍</div>
+    <h3>Penentuan Subjek Pajak</h3>
+    <p>Identifikasi apakah Anda tergolong Subjek Pajak Dalam Negeri, Luar Negeri, atau kategori khusus lainnya.</p>
+  </div>
+  <div class="feature-card">
+    <div class="feature-icon">📋</div>
+    <h3>Klasifikasi Objek Pajak</h3>
+    <p>Tentukan jenis penghasilan Anda: dikenai PPh, dikecualikan, atau dikenai PPh Final.</p>
+  </div>
+  <div class="feature-card">
+    <div class="feature-icon">🧮</div>
+    <h3>Perhitungan PTKP &amp; PKP</h3>
+    <p>Hitung Penghasilan Tidak Kena Pajak (PTKP) berdasarkan status perkawinan dan tanggungan.</p>
+  </div>
+  <div class="feature-card">
+    <div class="feature-icon">📊</div>
+    <h3>Estimasi Tarif Progresif</h3>
+    <p>Ketahui lapisan tarif PPh yang berlaku sesuai Pasal 17 UU HPP (5% hingga 35%).</p>
+  </div>
+</div>
+
+<div class="info-box">
+  <div class="info-icon">ℹ️</div>
+  <div>
+    <strong>Cara Kerja Sistem</strong>
+    <p>Sistem akan mengajukan serangkaian pertanyaan terkait kondisi perpajakan Anda. Jawab setiap pertanyaan dengan <em>Ya</em> atau <em>Tidak</em>. Mesin inferensi <em>forward chaining</em> akan memproses jawaban Anda secara otomatis untuk menghasilkan kesimpulan yang sesuai dengan ketentuan UU HPP.</p>
+  </div>
+</div>
+{% endblock %}

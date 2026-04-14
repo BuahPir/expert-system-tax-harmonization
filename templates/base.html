@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}Sistem Pakar PPh{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+        <div class="brand">
+            <span class="brand-icon">⚖️</span>
+            <div>
+                <div class="brand-title">Sistem Pakar PPh</div>
+                <div class="brand-sub">Penentuan Subjek &amp; Objek Pajak Penghasilan Orang Pribadi</div>
+            </div>
+        </div>
+        <div class="topbar-nav">
+            <a href="{{ url_for('index') }}" class="btn-ghost">Dashboard</a>
+            <a href="{{ url_for('restart') }}" class="btn-ghost">Konsultasi Baru</a>
+        </div>
+    </div>
+  </header>
+
+  <main class="main-wrap">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+    <p>Berdasarkan <strong>UU No. 7 Tahun 2021</strong> tentang Harmonisasi Peraturan Perpajakan (UU HPP)</p>
+    <p class="footer-disclaimer">Sistem ini bersifat edukatif. Untuk kepastian hukum, konsultasikan dengan konsultan pajak atau DJP.</p>
+  </footer>
+</body>
+</html>

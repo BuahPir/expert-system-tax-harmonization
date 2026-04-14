@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}Input Profil Awal — Sistem Pakar PPh{% endblock %}
+
+{% block content %}
+<div class="form-wrap">
+
+  <!-- Stepper -->
+  <div class="stepper">
+    <div class="step done">
+      <div class="step-dot">✓</div>
+      <div class="step-label">Input Data</div>
+    </div>
+    <div class="step-line done"></div>
+    <div class="step active">
+      <div class="step-dot">2</div>
+      <div class="step-label">Profil Awal</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step">
+      <div class="step-dot">3</div>
+      <div class="step-label">Konsultasi</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step">
+      <div class="step-dot">4</div>
+      <div class="step-label">Hasil</div>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <div class="form-card-header">
+      <div class="form-icon">👤</div>
+      <h2>Input Profil Awal</h2>
+      {% if profil.nama %}
+      <p>Halo, <strong>{{ profil.nama }}</strong>. Lengkapi profil dasar Anda untuk memulai konsultasi.</p>
+      {% else %}
+      <p>Lengkapi profil dasar Anda untuk memulai konsultasi pajak.</p>
+      {% endif %}
+    </div>
+
+    <form method="POST" action="{{ url_for('input_profil') }}">
+
+      <!-- Kewarganegaraan -->
+      <div class="field-group">
+        <label class="field-label">Kewarganegaraan</label>
+        <div class="radio-group">
+          <label class="radio-card">
+            <input type="radio" name="kewarganegaraan" value="wni" checked/>
+            <div class="radio-content">
+              <span class="radio-title">🇮🇩 Warga Negara Indonesia (WNI)</span>
+              <span class="radio-desc">Warga negara Indonesia</span>
+            </div>
+          </label>
+          <label class="radio-card">
+            <input type="radio" name="kewarganegaraan" value="wna"/>
+            <div class="radio-content">
+              <span class="radio-title">🌏 Warga Negara Asing (WNA)</span>
+              <span class="radio-desc">Warga negara selain Indonesia</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Domisili -->
+      <div class="field-group">
+        <label class="field-label">Tempat Tinggal</label>
+        <div class="radio-group">
+          <label class="radio-card">
+            <input type="radio" name="domisili" value="ya" checked/>
+            <div class="radio-content">
+              <span class="radio-title">🏠 Bertempat tinggal di Indonesia</span>
+              <span class="radio-desc">Tempat tinggal tetap di wilayah Indonesia</span>
+            </div>
+          </label>
+          <label class="radio-card">
+            <input type="radio" name="domisili" value="tidak"/>
+            <div class="radio-content">
+              <span class="radio-title">✈️ Tidak bertempat tinggal di Indonesia</span>
+              <span class="radio-desc">Berdomisili di luar wilayah Indonesia</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Status Kawin -->
+      <div class="field-group">
+        <label class="field-label">Status Perkawinan</label>
+        <div class="radio-group">
+          <label class="radio-card">
+            <input type="radio" name="status_kawin" value="lajang" checked/>
+            <div class="radio-content">
+              <span class="radio-title">👤 Lajang / Tidak Kawin</span>
+              <span class="radio-desc">Belum menikah atau tidak punya tanggungan</span>
+            </div>
+          </label>
+          <label class="radio-card">
+            <input type="radio" name="status_kawin" value="kawin"/>
+            <div class="radio-content">
+              <span class="radio-title">👫 Kawin</span>
+              <span class="radio-desc">Sudah menikah (dengan atau tanpa tanggungan)</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <a href="{{ url_for('input_data') }}" class="btn-ghost">&larr; Kembali</a>
+        <button type="submit" class="btn-primary">Mulai Konsultasi &rarr;</button>
+      </div>
+    </form>
+  </div>
+
+</div>
+{% endblock %}

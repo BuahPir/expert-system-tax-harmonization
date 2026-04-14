@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Konsultasi — Pertanyaan {{ nomor }}{% endblock %}
+
+{% block content %}
+<div class="konsul-wrap">
+
+  <!-- Stepper -->
+  <div class="stepper">
+    <div class="step done"><div class="step-dot">✓</div><div class="step-label">Input Data</div></div>
+    <div class="step-line done"></div>
+    <div class="step done"><div class="step-dot">✓</div><div class="step-label">Profil Awal</div></div>
+    <div class="step-line done"></div>
+    <div class="step active"><div class="step-dot">3</div><div class="step-label">Konsultasi</div></div>
+    <div class="step-line"></div>
+    <div class="step"><div class="step-dot">4</div><div class="step-label">Hasil</div></div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-area">
+    <div class="progress-meta">
+      <span>Pernyataan Fakta <strong>{{ nomor }}</strong> dari <strong>{{ total }}</strong></span>
+      <span>{{ persen }}% selesai</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" style="width: {{ persen }}%"></div>
+    </div>
+  </div>
+
+  <!-- Kartu Pernyataan Fakta -->
+  <div class="question-card">
+    <div class="question-badge">{{ fid }} — Pernyataan Fakta</div>
+
+    <!-- Pernyataan fakta (ditampilkan sebagai pernyataan, bukan pertanyaan) -->
+    <div class="pernyataan-box">
+      <p class="pernyataan-text">{{ pernyataan }}</p>
+    </div>
+
+    <!-- Pertanyaan konfirmasi -->
+    <p class="question-text">{{ pertanyaan }}</p>
+
+    <!-- Forward Chaining: Input Jawaban -->
+    <div class="answer-row">
+      <form method="POST" action="{{ url_for('jawab') }}" style="display:inline;flex:1">
+        <input type="hidden" name="fid" value="{{ fid }}">
+        <input type="hidden" name="jawab" value="ya">
+        <button type="submit" class="btn-answer btn-ya">✓ Ya, sesuai</button>
+      </form>
+      <form method="POST" action="{{ url_for('jawab') }}" style="display:inline;flex:1">
+        <input type="hidden" name="fid" value="{{ fid }}">
+        <input type="hidden" name="jawab" value="tidak">
+        <button type="submit" class="btn-answer btn-tidak">✗ Tidak sesuai</button>
+      </form>
+    </div>
+
+    {% if history|selectattr("fid","ne","F01")|selectattr("fid","ne","F02")
+           |selectattr("fid","ne","F05")|selectattr("fid","ne","F22")
+           |selectattr("fid","ne","F23")|list %}
+    <form method="POST" action="{{ url_for('kembali') }}" style="margin-top:1rem">
+      <button type="submit" class="btn-ghost btn-sm">&larr; Kembali</button>
+    </form>
+    {% endif %}
+  </div>
+
+  <!-- Riwayat jawaban dinamis -->
+  {% set dinamis = history|rejectattr("fid","in",["F01","F02","F05","F22","F23"])|list %}
+  {% if dinamis %}
+  <div class="history-panel">
+    <h4 class="history-title">Jawaban Sebelumnya</h4>
+    <div class="history-list">
+      {% for h in dinamis|reverse %}
+      <div class="history-item">
+        <span class="history-fid">{{ h.fid }}</span>
+        <span class="history-pert">{{ h.pertanyaan }}</span>
+        <span class="history-ans {{ 'ans-ya' if h.jawaban == 'ya' else 'ans-tidak' }}">
+          {{ '✓ Ya' if h.jawaban == 'ya' else '✗ Tidak' }}
+        </span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

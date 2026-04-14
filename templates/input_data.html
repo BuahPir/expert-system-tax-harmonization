@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Input Data — Sistem Pakar PPh{% endblock %}
+
+{% block content %}
+<div class="form-wrap">
+
+  <!-- Stepper -->
+  <div class="stepper">
+    <div class="step active">
+      <div class="step-dot">1</div>
+      <div class="step-label">Input Data</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step">
+      <div class="step-dot">2</div>
+      <div class="step-label">Profil Awal</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step">
+      <div class="step-dot">3</div>
+      <div class="step-label">Konsultasi</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step">
+      <div class="step-dot">4</div>
+      <div class="step-label">Hasil</div>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <div class="form-card-header">
+      <h2>Input Data Umum</h2>
+      <p>Masukkan informasi dasar untuk keperluan laporan konsultasi.</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('input_data') }}">
+      <div class="field-group">
+        <label class="field-label" for="nama">Nama Lengkap</label>
+        <input
+          type="text" id="nama" name="nama"
+          class="field-input"
+          placeholder="Masukkan nama lengkap Anda"
+          maxlength="100"
+          required
+        />
+        <span class="field-hint">Opsional — digunakan hanya untuk laporan</span>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="tahun">Tahun Pajak</label>
+        <select id="tahun" name="tahun" class="field-input">
+          <option value="2026" selected>2026</option>
+          <option value="2025">2025</option>
+          <option value="2024">2024</option>
+          <option value="2023">2023</option>
+          <option value="2022">2022</option>
+        </select>
+        <span class="field-hint">Tahun pajak yang ingin dikonsultasikan</span>
+      </div>
+
+      <button type="submit" class="btn-primary btn-full">
+        Lanjut ke Profil Awal &rarr;
+      </button>
+    </form>
+  </div>
+
+</div>
+{% endblock %}

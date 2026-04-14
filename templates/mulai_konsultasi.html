@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Mulai Konsultasi — Sistem Pakar PPh{% endblock %}
+
+{% block content %}
+<div class="form-wrap">
+
+  <!-- Stepper -->
+  <div class="stepper">
+    <div class="step done">
+      <div class="step-dot">✓</div>
+      <div class="step-label">Input Data</div>
+    </div>
+    <div class="step-line done"></div>
+    <div class="step done">
+      <div class="step-dot">✓</div>
+      <div class="step-label">Profil Awal</div>
+    </div>
+    <div class="step-line done"></div>
+    <div class="step active">
+      <div class="step-dot">3</div>
+      <div class="step-label">Konsultasi</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step">
+      <div class="step-dot">4</div>
+      <div class="step-label">Hasil</div>
+    </div>
+  </div>
+
+  <div class="form-card" style="text-align:center">
+    <div class="form-icon" style="font-size:3rem;margin-bottom:1rem">🤖</div>
+    <h2 style="margin-bottom:.5rem">Siap Memulai Konsultasi</h2>
+
+    {% if profil.nama %}
+    <p style="color:var(--muted);margin-bottom:1.5rem">
+      Profil <strong>{{ profil.nama }}</strong> — Tahun Pajak <strong>{{ profil.tahun }}</strong> telah dikonfirmasi.
+    </p>
+    {% else %}
+    <p style="color:var(--muted);margin-bottom:1.5rem">
+      Profil awal telah dikonfirmasi. Sistem akan mengajukan pernyataan fakta satu per satu.
+    </p>
+    {% endif %}
+
+    <div class="info-box" style="text-align:left;margin-bottom:1.75rem">
+      <div class="info-icon">ℹ️</div>
+      <div>
+        <strong>Cara Kerja Konsultasi</strong>
+        <p>Sistem akan menampilkan pernyataan fakta secara bertahap. Jawab <em>Ya</em> jika pernyataan sesuai kondisi Anda, atau <em>Tidak</em> jika tidak sesuai. Mesin inferensi <em>forward chaining</em> akan memproses setiap jawaban secara otomatis.</p>
+      </div>
+    </div>
+
+    <a href="{{ url_for('konsultasi') }}" class="btn-primary btn-lg">
+      Mulai Konsultasi &rarr;
+    </a>
+  </div>
+
+</div>
+{% endblock %}
