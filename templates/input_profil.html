@@ -7,7 +7,7 @@
   <!-- Stepper -->
   <div class="stepper">
     <div class="step done">
-      <div class="step-dot">✓</div>
+      <div class="step-dot">Done</div>
       <div class="step-label">Input Data</div>
     </div>
     <div class="step-line done"></div>
@@ -29,7 +29,6 @@
 
   <div class="form-card">
     <div class="form-card-header">
-      <div class="form-icon">👤</div>
       <h2>Input Profil Awal</h2>
       {% if profil.nama %}
       <p>Halo, <strong>{{ profil.nama }}</strong>. Lengkapi profil dasar Anda untuk memulai konsultasi.</p>
@@ -47,14 +46,14 @@
           <label class="radio-card">
             <input type="radio" name="kewarganegaraan" value="wni" checked/>
             <div class="radio-content">
-              <span class="radio-title">🇮🇩 Warga Negara Indonesia (WNI)</span>
+              <span class="radio-title">Warga Negara Indonesia (WNI)</span>
               <span class="radio-desc">Warga negara Indonesia</span>
             </div>
           </label>
           <label class="radio-card">
             <input type="radio" name="kewarganegaraan" value="wna"/>
             <div class="radio-content">
-              <span class="radio-title">🌏 Warga Negara Asing (WNA)</span>
+              <span class="radio-title">Warga Negara Asing (WNA)</span>
               <span class="radio-desc">Warga negara selain Indonesia</span>
             </div>
           </label>
@@ -68,14 +67,14 @@
           <label class="radio-card">
             <input type="radio" name="domisili" value="ya" checked/>
             <div class="radio-content">
-              <span class="radio-title">🏠 Bertempat tinggal di Indonesia</span>
+              <span class="radio-title">Bertempat tinggal di Indonesia</span>
               <span class="radio-desc">Tempat tinggal tetap di wilayah Indonesia</span>
             </div>
           </label>
           <label class="radio-card">
             <input type="radio" name="domisili" value="tidak"/>
             <div class="radio-content">
-              <span class="radio-title">✈️ Tidak bertempat tinggal di Indonesia</span>
+              <span class="radio-title">Tidak bertempat tinggal di Indonesia</span>
               <span class="radio-desc">Berdomisili di luar wilayah Indonesia</span>
             </div>
           </label>
@@ -89,14 +88,14 @@
           <label class="radio-card">
             <input type="radio" name="status_kawin" value="lajang" checked/>
             <div class="radio-content">
-              <span class="radio-title">👤 Lajang / Tidak Kawin</span>
+              <span class="radio-title">Lajang / Tidak Kawin</span>
               <span class="radio-desc">Belum menikah atau tidak punya tanggungan</span>
             </div>
           </label>
           <label class="radio-card">
             <input type="radio" name="status_kawin" value="kawin"/>
             <div class="radio-content">
-              <span class="radio-title">👫 Kawin</span>
+              <span class="radio-title">Kawin</span>
               <span class="radio-desc">Sudah menikah (dengan atau tanpa tanggungan)</span>
             </div>
           </label>

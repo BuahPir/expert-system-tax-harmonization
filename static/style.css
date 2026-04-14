@@ -32,6 +32,9 @@ body {
   color: var(--text);
   font-size: 15px;
   line-height: 1.65;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 /* ── TOPBAR ──────────────────────────────────────── */
@@ -51,13 +54,28 @@ body {
 .brand-sub { font-size: .75rem; color: var(--muted); }
 
 /* ── MAIN ────────────────────────────────────────── */
-.main-wrap { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem 3rem; }
+.main-wrap {
+  flex: 1;
+  max-width: 860px; margin: 0 auto;
+  padding: 2rem 1.5rem 3rem;
+  width: 100%;
+  padding-bottom: 15rem;
+}
 
 /* ── FOOTER ──────────────────────────────────────── */
 .footer {
-  text-align: center; padding: 1.5rem 1rem 2rem;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  text-align: center;
+  padding: 1.5rem 1rem 2rem;
   border-top: 1px solid var(--border);
-  font-size: .8rem; color: var(--muted);
+  font-size: .8rem;
+  color: var(--muted);
+  z-index: 99;
+  width: 100%;
 }
 .footer-disclaimer { margin-top: .3rem; font-style: italic; }
 

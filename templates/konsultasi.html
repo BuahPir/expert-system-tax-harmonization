@@ -6,9 +6,9 @@
 
   <!-- Stepper -->
   <div class="stepper">
-    <div class="step done"><div class="step-dot">✓</div><div class="step-label">Input Data</div></div>
+    <div class="step done"><div class="step-dot">Done</div><div class="step-label">Input Data</div></div>
     <div class="step-line done"></div>
-    <div class="step done"><div class="step-dot">✓</div><div class="step-label">Profil Awal</div></div>
+    <div class="step done"><div class="step-dot">Done</div><div class="step-label">Profil Awal</div></div>
     <div class="step-line done"></div>
     <div class="step active"><div class="step-dot">3</div><div class="step-label">Konsultasi</div></div>
     <div class="step-line"></div>
@@ -43,12 +43,12 @@
       <form method="POST" action="{{ url_for('jawab') }}" style="display:inline;flex:1">
         <input type="hidden" name="fid" value="{{ fid }}">
         <input type="hidden" name="jawab" value="ya">
-        <button type="submit" class="btn-answer btn-ya">✓ Ya, sesuai</button>
+        <button type="submit" class="btn-answer btn-ya">Ya, sesuai</button>
       </form>
       <form method="POST" action="{{ url_for('jawab') }}" style="display:inline;flex:1">
         <input type="hidden" name="fid" value="{{ fid }}">
         <input type="hidden" name="jawab" value="tidak">
-        <button type="submit" class="btn-answer btn-tidak">✗ Tidak sesuai</button>
+        <button type="submit" class="btn-answer btn-tidak">Tidak sesuai</button>
       </form>
     </div>
 
@@ -72,7 +72,7 @@
         <span class="history-fid">{{ h.fid }}</span>
         <span class="history-pert">{{ h.pertanyaan }}</span>
         <span class="history-ans {{ 'ans-ya' if h.jawaban == 'ya' else 'ans-tidak' }}">
-          {{ '✓ Ya' if h.jawaban == 'ya' else '✗ Tidak' }}
+          {{ 'Ya' if h.jawaban == 'ya' else 'Tidak' }}
         </span>
       </div>
       {% endfor %}
