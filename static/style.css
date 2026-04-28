@@ -470,3 +470,35 @@ body {
   font-weight: 600; font-size: 1rem;
   color: var(--blue); margin-bottom: .25rem;
 }
+
+/* ── KESIMPULAN DESC & LIST STYLE ────────────────── */
+.kes-desc { 
+  font-size: .88rem; 
+  color: var(--muted); 
+  margin-bottom: .75rem; 
+  line-height: 1.6;
+}
+
+/* Styling khusus untuk list <ul> di dalam deskripsi dinamis */
+.kes-desc ul {
+  margin-top: 0.4rem;
+  margin-bottom: 0.4rem;
+  padding-left: 1.25rem;
+}
+
+.kes-desc li {
+  margin-bottom: 0.25rem;
+}
+
+.kes-desc li:last-child {
+  margin-bottom: 0;
+}
+
+/* Mengatur spasi jika di dalam deskripsi terdapat tag <p> */
+.kes-desc p {
+  margin-bottom: 0.5rem;
+}
+
+.kes-desc p:last-child {
+  margin-bottom: 0;
+}

@@ -112,6 +112,13 @@ CONCLUSIONS = {
         "dasar_hukum": "Pasal 4 ayat (1) UU HPP No. 7/2021",
         "tipe": "objek",
         "warna": "red",
+        # Deskripsi spesifik per sumber penghasilan
+        "deskripsi_per_fakta": {
+            "F14": "Penghasilan Anda dari <strong>pekerjaan, jasa, gaji, atau upah</strong> merupakan Objek Pajak PPh berdasarkan Pasal 4 ayat (1) huruf a. Anda wajib melaporkan dan membayar pajak atas penghasilan tersebut.",
+            "F15": "Penghasilan Anda dari <strong>usaha atau kegiatan bebas (freelance/wiraswasta)</strong> merupakan Objek Pajak PPh berdasarkan Pasal 4 ayat (1) huruf c. Anda wajib melaporkan dan membayar pajak atas penghasilan tersebut.",
+            "F16": "Penghasilan Anda dari <strong>modal (bunga, dividen, royalti, atau sewa)</strong> merupakan Objek Pajak PPh berdasarkan Pasal 4 ayat (1) huruf f–i. Anda wajib melaporkan dan membayar pajak atas penghasilan tersebut.",
+            "F25": "Penghasilan Anda dalam bentuk <strong>natura atau kenikmatan dari pemberi kerja</strong> merupakan Objek Pajak PPh berdasarkan Pasal 4 ayat (1) huruf a UU HPP. Anda wajib melaporkan penghasilan dalam bentuk ini.",
+        },
     },
     "K06": {
         "judul": "Penghasilan Bukan Objek PPh",
@@ -119,6 +126,13 @@ CONCLUSIONS = {
         "dasar_hukum": "Pasal 4 ayat (3) UU HPP No. 7/2021",
         "tipe": "objek",
         "warna": "green",
+        # Deskripsi spesifik per sumber penghasilan
+        "deskripsi_per_fakta": {
+            "F17": "<strong>Warisan</strong> yang Anda terima dikecualikan dari pengenaan PPh berdasarkan Pasal 4 ayat (3) huruf b. Anda tidak perlu membayar pajak atas penerimaan warisan tersebut.",
+            "F18": "<strong>Hibah dari keluarga sedarah dalam garis keturunan lurus satu derajat</strong> (orang tua atau anak kandung) yang Anda terima dikecualikan dari pengenaan PPh berdasarkan Pasal 4 ayat (3) huruf a angka 2.",
+            "F19": "<strong>Bantuan, sumbangan, atau zakat</strong> dari lembaga resmi yang diakui pemerintah yang Anda terima dikecualikan dari pengenaan PPh berdasarkan Pasal 4 ayat (3) huruf a angka 1.",
+            "F21": "<strong>Dividen dari dalam negeri yang diinvestasikan kembali di wilayah NKRI</strong> dikecualikan dari pengenaan PPh berdasarkan Pasal 4 ayat (3) UU HPP. Syarat: investasi ulang sesuai ketentuan berlaku.",
+        },
     },
     "K07": {
         "judul": "Penghasilan Dikenai PPh Final",
@@ -299,27 +313,90 @@ def get_next_question(answered: dict) -> str | None:
     return None  # Semua sudah dijawab
 
 
-def run_inference(answered: dict) -> list:
+_K05_FAKTA = {"F14", "F15", "F16", "F25"}
+_K06_FAKTA = {"F17", "F18", "F19", "F21"}
+
+def get_judul_deskripsi(kode: str, pemicu: list[str]) -> tuple[str, str]:
+    """
+    Mengembalikan (judul, deskripsi) yang sudah disesuaikan dengan sumber
+    penghasilan yang memicu kesimpulan.
+
+    Untuk K05 dan K06 dengan satu pemicu → deskripsi spesifik.
+    Untuk K05 dan K06 dengan beberapa pemicu → deskripsi dikombinasikan.
+    Untuk kesimpulan lain → judul & deskripsi default dari CONCLUSIONS.
+    """
+    konklusi = CONCLUSIONS[kode]
+    judul    = konklusi["judul"]
+    per_fakta = konklusi.get("deskripsi_per_fakta", {})
+
+    if not per_fakta or not pemicu:
+        # Kesimpulan selain K05/K06, atau tidak ada pemicu tercatat
+        return judul, konklusi["deskripsi"]
+
+    if len(pemicu) == 1:
+        # Satu sumber → deskripsi tunggal spesifik
+        deskripsi = per_fakta.get(pemicu[0], konklusi["deskripsi"])
+    else:
+        # Beberapa sumber → gabungkan semua deskripsi per sumber
+        bagian = []
+        for f in pemicu:
+            if f in per_fakta:
+                bagian.append(f"<li>{per_fakta[f]}</li>")
+        if bagian:
+            deskripsi = (
+                "Anda memiliki beberapa sumber penghasilan dalam kategori ini:<ul>"
+                + "".join(bagian)
+                + "</ul>"
+            )
+        else:
+            deskripsi = konklusi["deskripsi"]
+
+    return judul, deskripsi
+
+def run_inference(answered: dict) -> list[dict]:
     """
     Menjalankan forward chaining berdasarkan fakta yang sudah dikonfirmasi.
-    Mengembalikan list kode kesimpulan yang terpenuhi.
+
+    Mengembalikan list of dict:
+        [{"kode": "K05", "pemicu": ["F14", "F25"]}, ...]
+
+    'pemicu' berisi fakta-fakta yang secara langsung memicu kesimpulan
+    (relevan untuk K05 dan K06 agar deskripsi dapat disesuaikan per sumber).
     """
-    # Buat set fakta yang bernilai TRUE
     true_facts = {fid for fid, val in answered.items() if val == "ya"}
-    results = []
-    seen = set()
+
+    # Kumpulkan pemicu per kode kesimpulan
+    pemicu_map: dict[str, list[str]] = {}
+    seen: set[str] = set()
 
     for rule in RULES:
-        cond_ok  = all(f in true_facts for f in rule["kondisi"])
-        not_ok   = all(f not in true_facts for f in rule["not_kondisi"])
+        cond_ok = all(f in true_facts for f in rule["kondisi"])
+        not_ok  = all(f not in true_facts for f in rule["not_kondisi"])
         k = rule["kesimpulan"]
-        if cond_ok and not_ok and k not in seen:
-            results.append(k)
+
+        if cond_ok and not_ok:
+            if k not in pemicu_map:
+                pemicu_map[k] = []
+            # Catat fakta "isi" (bukan F01) yang memicu rule ini
+            for f in rule["kondisi"]:
+                if f != "F01" and f not in pemicu_map[k]:
+                    # Hanya simpan fakta konten relevan untuk K05/K06
+                    if k == "K05" and f in _K05_FAKTA:
+                        pemicu_map[k].append(f)
+                    elif k == "K06" and f in _K06_FAKTA:
+                        pemicu_map[k].append(f)
             seen.add(k)
 
-    # K12: PKP <= 0
-    if "F29" in answered and answered["F29"] == "tidak" and "K12" not in seen:
-        results.append("K12")
+    # K12: PKP ≤ 0
+    if "F29" in answered and answered["F29"] == "tidak":
         seen.add("K12")
+        pemicu_map.setdefault("K12", [])
+
+    # Susun hasil dengan urutan konsisten
+    urutan = ["K01","K02","K03","K04","K05","K06","K07","K08","K09","K10","K11","K12"]
+    results = []
+    for k in urutan:
+        if k in seen:
+            results.append({"kode": k, "pemicu": pemicu_map.get(k, [])})
 
     return results

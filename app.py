@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, session, redirect, url_for, j
 import os
 from knowledge_base import (
     FACTS, QUESTIONS, CONCLUSIONS,
-    get_next_question, run_inference
+    get_next_question, run_inference, get_judul_deskripsi
 )
 
 app = Flask(__name__)
@@ -180,8 +180,27 @@ def hasil():
     if not answered:
         return redirect(url_for("index"))
 
-    kesimpulan_ids  = run_inference(answered)
-    kesimpulan_list = [{"kode":k,**CONCLUSIONS[k]} for k in kesimpulan_ids if k in CONCLUSIONS]
+    # run_inference sekarang mereturn list of dict: [{"kode": "K05", "pemicu": ["F14", "F25"]}, ...]
+    inference_results = run_inference(answered)
+    
+    kesimpulan_list = []
+    for item in inference_results:
+        kode = item["kode"]
+        pemicu = item.get("pemicu", [])
+        
+        if kode in CONCLUSIONS:
+            # Copy data default dari CONCLUSIONS (untuk warna, dasar_hukum, tipe, dll)
+            kes_data = CONCLUSIONS[kode].copy()
+            
+            # Dapatkan judul dan deskripsi dinamis berdasarkan pemicu
+            judul_dinamis, deskripsi_dinamis = get_judul_deskripsi(kode, pemicu)
+            
+            # Update data dengan nilai dinamis
+            kes_data["kode"] = kode
+            kes_data["judul"] = judul_dinamis
+            kes_data["deskripsi"] = deskripsi_dinamis
+            
+            kesimpulan_list.append(kes_data)
 
     grouped = {}
     tipe_label = {
@@ -191,7 +210,7 @@ def hasil():
         "pph":    "Kewajiban PPh Terutang",
     }
     for item in kesimpulan_list:
-        grouped.setdefault(item["tipe"], []).append(item)
+        grouped.setdefault(item.get("tipe"), []).append(item)
 
     return render_template(
         "hasil.html",

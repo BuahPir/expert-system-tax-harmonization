@@ -4,7 +4,6 @@
 {% block content %}
 <div class="hasil-wrap">
 
-  <!-- Stepper -->
   <div class="stepper">
     <div class="step done"><div class="step-dot">Done</div><div class="step-label">Input Data</div></div>
     <div class="step-line done"></div>
@@ -15,7 +14,6 @@
     <div class="step active"><div class="step-dot">4</div><div class="step-label">Hasil</div></div>
   </div>
 
-  <!-- Header hasil -->
   <div class="hasil-header">
     <h1>Hasil Konsultasi Pajak</h1>
     {% if profil and profil.nama %}
@@ -25,7 +23,6 @@
        <strong>{{ total_jawaban }}</strong> fakta yang Anda berikan.</p>
   </div>
 
-  <!-- Kesimpulan per tipe -->
   {% set tipe_order = ["subjek", "objek", "ptkp", "pph"] %}
   {% for tipe in tipe_order %}
     {% if tipe in grouped %}
@@ -45,7 +42,7 @@
           <span class="kes-kode">{{ item.kode }}</span>
           <span class="kes-judul">{{ item.judul }}</span>
         </div>
-        <p class="kes-desc">{{ item.deskripsi }}</p>
+        <div class="kes-desc">{{ item.deskripsi | safe }}</div>
         <div class="kes-footer">
           <span class="kes-hukum">{{ item.dasar_hukum }}</span>
         </div>
@@ -62,7 +59,6 @@
   </div>
   {% endif %}
 
-  <!-- Ringkasan fakta -->
   <div class="fakta-summary">
     <h3>Ringkasan Fakta yang Dikonfirmasi</h3>
     <div class="fakta-table-wrap">
@@ -91,13 +87,11 @@
     </div>
   </div>
 
-  <!-- Tombol aksi -->
   <div class="action-row">
     <a href="{{ url_for('reset') }}" class="btn-primary">Konsultasi Baru</a>
     <button onclick="window.print()" class="btn-ghost">Cetak Hasil</button>
   </div>
 
-  <!-- Catatan disclaimer -->
   <div class="disclaimer">
     <strong>Catatan Penting:</strong> Hasil ini dihasilkan oleh sistem pakar berbasis aturan dan
     bersifat edukatif. Untuk kepastian dan penghitungan pajak yang akurat, konsultasikan dengan
