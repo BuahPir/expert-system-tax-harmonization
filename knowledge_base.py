@@ -255,7 +255,7 @@ def get_next_question(answered: dict) -> str | None:
             if fid not in answered:
                 return fid
     else:
-        for fid in ["F03", "F04"]:
+        for fid in ["F03"]:
             if fid not in answered:
                 return fid
 
