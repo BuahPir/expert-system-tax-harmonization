@@ -239,19 +239,12 @@ RULE_K12 = {"kondisi_negatif": "F29", "kesimpulan": "K12"}
 # Urutan pertanyaan ditentukan berdasarkan jawaban sebelumnya
 # ----------------------------------------------------------
 def get_next_question(answered: dict) -> str | None:
-    """
-    Menentukan pertanyaan berikutnya berdasarkan fakta yang sudah dijawab.
-    Mengembalikan kode fakta (mis. 'F02') atau None jika konsultasi selesai.
-    """
-    # F01 selalu pertama
     if "F01" not in answered:
         return "F01"
 
-    # Jika bukan orang pribadi, selesai
     if answered.get("F01") == "tidak":
         return None
 
-    # Pertanyaan dasar kewarganegaraan & domisili
     for fid in ["F05", "F02"]:
         if fid not in answered:
             return fid
@@ -269,18 +262,18 @@ def get_next_question(answered: dict) -> str | None:
             if fid not in answered:
                 return fid
     else:
-        for fid in ["F03"]:
-            if fid not in answered:
-                return fid
+        # ✅ PERUBAHAN: F03 hanya ditanyakan jika WNA
+        #    Untuk WNI (F05="tidak"), F03 diisi otomatis di run_inference
+        if is_wna and "F03" not in answered:
+            return "F03"
 
-    # Warisan
+    # ... sisa pertanyaan tetap sama ...
     for fid in ["F12"]:
         if fid not in answered:
             return fid
     if answered.get("F12") == "ya" and "F13" not in answered:
         return "F13"
 
-    # Jenis penghasilan
     for fid in ["F14", "F15", "F16", "F25"]:
         if fid not in answered:
             return fid
@@ -288,17 +281,14 @@ def get_next_question(answered: dict) -> str | None:
     if answered.get("F15") == "ya" and "F20" not in answered:
         return "F20"
 
-    # Penghasilan dikecualikan
     for fid in ["F17", "F18", "F19", "F21"]:
         if fid not in answered:
             return fid
 
-    # PPh Final
     for fid in ["F26", "F27", "F28"]:
         if fid not in answered:
             return fid
 
-    # Status kawin & tanggungan
     for fid in ["F22", "F23"]:
         if fid not in answered:
             return fid
@@ -306,11 +296,54 @@ def get_next_question(answered: dict) -> str | None:
     if answered.get("F23") == "ya" and "F24" not in answered:
         return "F24"
 
-    # PKP
     if "F29" not in answered:
         return "F29"
 
-    return None  # Semua sudah dijawab
+    return None
+
+
+def run_inference(answered: dict) -> list[dict]:
+    true_facts = {fid for fid, val in answered.items() if val == "ya"}
+
+    # ✅ PERUBAHAN: jika WNI (F05="tidak"), F03 dianggap otomatis "ya"
+    #    WNI yang menyatakan bertempat tinggal di Indonesia (F02="ya")
+    #    tidak perlu membuktikan 183 hari — status SPDN sudah terpenuhi
+    #    via F01+F02. Namun agar rule K01 via F03 tetap bisa terpicu
+    #    (misal F02="tidak" tapi WNI), F03 di-inject di sini.
+    if answered.get("F05") == "tidak":
+        true_facts.add("F03")
+
+    # ... sisa logika run_inference tidak berubah ...
+    pemicu_map: dict[str, list[str]] = {}
+    seen: set[str] = set()
+
+    for rule in RULES:
+        cond_ok = all(f in true_facts for f in rule["kondisi"])
+        not_ok  = all(f not in true_facts for f in rule["not_kondisi"])
+        k = rule["kesimpulan"]
+
+        if cond_ok and not_ok:
+            if k not in pemicu_map:
+                pemicu_map[k] = []
+            for f in rule["kondisi"]:
+                if f != "F01" and f not in pemicu_map[k]:
+                    if k == "K05" and f in _K05_FAKTA:
+                        pemicu_map[k].append(f)
+                    elif k == "K06" and f in _K06_FAKTA:
+                        pemicu_map[k].append(f)
+            seen.add(k)
+
+    if "F29" in answered and answered["F29"] == "tidak":
+        seen.add("K12")
+        pemicu_map.setdefault("K12", [])
+
+    urutan = ["K01","K02","K03","K04","K05","K06","K07","K08","K09","K10","K11","K12"]
+    results = []
+    for k in urutan:
+        if k in seen:
+            results.append({"kode": k, "pemicu": pemicu_map.get(k, [])})
+
+    return results
 
 
 _K05_FAKTA = {"F14", "F15", "F16", "F25"}
